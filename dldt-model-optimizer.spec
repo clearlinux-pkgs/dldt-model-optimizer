@@ -4,16 +4,14 @@
 #
 Name     : dldt-model-optimizer
 Version  : 2018.r3
-Release  : 1
+Release  : 2
 URL      : https://github.com/opencv/dldt/archive/2018_R3.tar.gz
 Source0  : https://github.com/opencv/dldt/archive/2018_R3.tar.gz
 Summary  : GoogleTest (with main() function)
 Group    : Development/Tools
 License  : Apache-2.0 BSD-3-Clause BSL-1.0 MIT
-Requires: dldt-model-optimizer-bin = %{version}-%{release}
+Requires: dldt-model-optimizer-data = %{version}-%{release}
 Requires: dldt-model-optimizer-license = %{version}-%{release}
-Requires: dldt-model-optimizer-python = %{version}-%{release}
-Requires: dldt-model-optimizer-python3 = %{version}-%{release}
 Requires: networkx
 Requires: numpy
 Requires: onnx
@@ -21,19 +19,17 @@ Requires: protobuf
 Requires: tensorflow
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
-Patch1: 0001-Create-basic-setup.py.patch
 
 %description
 The Google Mock class generator is an application that is part of cppclean.
 visit http://code.google.com/p/cppclean/
 
-%package bin
-Summary: bin components for the dldt-model-optimizer package.
-Group: Binaries
-Requires: dldt-model-optimizer-license = %{version}-%{release}
+%package data
+Summary: data components for the dldt-model-optimizer package.
+Group: Data
 
-%description bin
-bin components for the dldt-model-optimizer package.
+%description data
+data components for the dldt-model-optimizer package.
 
 
 %package license
@@ -44,39 +40,19 @@ Group: Default
 license components for the dldt-model-optimizer package.
 
 
-%package python
-Summary: python components for the dldt-model-optimizer package.
-Group: Default
-Requires: dldt-model-optimizer-python3 = %{version}-%{release}
-
-%description python
-python components for the dldt-model-optimizer package.
-
-
-%package python3
-Summary: python3 components for the dldt-model-optimizer package.
-Group: Default
-Requires: python3-core
-
-%description python3
-python3 components for the dldt-model-optimizer package.
-
-
 %prep
 %setup -q -n dldt-2018_R3
-%patch1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1540847938
-pushd model-optimizer
-python3 setup.py build
+export SOURCE_DATE_EPOCH=1541013038
+make  %{?_smp_mflags} || :
 
-popd
 %install
+export SOURCE_DATE_EPOCH=1541013038
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/dldt-model-optimizer
 cp LICENSE %{buildroot}/usr/share/package-licenses/dldt-model-optimizer/LICENSE
@@ -90,20 +66,480 @@ cp inference-engine/thirdparty/clDNN/common/khronos_ocl_clhpp/LICENSE.txt %{buil
 cp inference-engine/thirdparty/mkl-dnn/LICENSE %{buildroot}/usr/share/package-licenses/dldt-model-optimizer/inference-engine_thirdparty_mkl-dnn_LICENSE
 cp inference-engine/thirdparty/mkl-dnn/src/cpu/xbyak/COPYRIGHT %{buildroot}/usr/share/package-licenses/dldt-model-optimizer/inference-engine_thirdparty_mkl-dnn_src_cpu_xbyak_COPYRIGHT
 cp inference-engine/thirdparty/mkl-dnn/tests/gtests/gtest/LICENSE %{buildroot}/usr/share/package-licenses/dldt-model-optimizer/inference-engine_thirdparty_mkl-dnn_tests_gtests_gtest_LICENSE
-pushd model-optimizer
-python3 -tt setup.py build  install --root=%{buildroot}
-popd
-echo ----[ mark ]----
-cat %{buildroot}/usr/lib/python3*/site-packages/*/requires.txt || :
-echo ----[ mark ]----
+:
+## install_append content
+mkdir -p %{buildroot}/usr/share/openvino
+cp -ar model-optimizer %{buildroot}/usr/share/openvino/
+## install_append end
 
 %files
 %defattr(-,root,root,-)
 
-%files bin
+%files data
 %defattr(-,root,root,-)
-/usr/bin/ModelOptimizer
-/usr/bin/mo.py
+/usr/share/openvino/model-optimizer/ModelOptimizer
+/usr/share/openvino/model-optimizer/extensions/__init__.py
+/usr/share/openvino/model-optimizer/extensions/back/EltwiseBroadcast.py
+/usr/share/openvino/model-optimizer/extensions/back/ShufflenetReLUReorder.py
+/usr/share/openvino/model-optimizer/extensions/back/__init__.py
+/usr/share/openvino/model-optimizer/extensions/back/kaldi_remove_memory_output.py
+/usr/share/openvino/model-optimizer/extensions/back/remove_last_softmax_pattern.py
+/usr/share/openvino/model-optimizer/extensions/front/LRNReplacer.py
+/usr/share/openvino/model-optimizer/extensions/front/__init__.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/CustomLayersMapping.xml.example
+/usr/share/openvino/model-optimizer/extensions/front/caffe/__init__.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/accum_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/argmax_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/correlation_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/ctcgreedydecoder_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/data_augmentation_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/detection_output.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/grn_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/interp_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/mvn_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/normalize_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/power_file_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/prelu_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/priorbox_clustered_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/priorbox_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/proposal_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/proposal_python_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/psroipooling_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/regionyolo_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/reorgyolo_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/resample_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/simplernms_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/caffe/spatial_transformer_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/freeze_placeholder_value.py
+/usr/share/openvino/model-optimizer/extensions/front/image_scaler.py
+/usr/share/openvino/model-optimizer/extensions/front/kaldi/__init__.py
+/usr/share/openvino/model-optimizer/extensions/front/kaldi/add_reshape_for_conv.py
+/usr/share/openvino/model-optimizer/extensions/front/kaldi/add_reshape_for_pooling.py
+/usr/share/openvino/model-optimizer/extensions/front/kaldi/eliminate_redundant_reshape.py
+/usr/share/openvino/model-optimizer/extensions/front/kaldi/fuse_repeated_reshape.py
+/usr/share/openvino/model-optimizer/extensions/front/kaldi/replace_lstm_node_pattern.py
+/usr/share/openvino/model-optimizer/extensions/front/mxnet/__init__.py
+/usr/share/openvino/model-optimizer/extensions/front/mxnet/add_n.py
+/usr/share/openvino/model-optimizer/extensions/front/mxnet/custom.py
+/usr/share/openvino/model-optimizer/extensions/front/mxnet/element_wise_sum.py
+/usr/share/openvino/model-optimizer/extensions/front/mxnet/ssd_pattern_flatten_softmax_activation.py
+/usr/share/openvino/model-optimizer/extensions/front/mxnet/ssd_pattern_remove_flatten.py
+/usr/share/openvino/model-optimizer/extensions/front/mxnet/ssd_pattern_remove_reshape.py
+/usr/share/openvino/model-optimizer/extensions/front/mxnet/ssd_pattern_remove_transpose.py
+/usr/share/openvino/model-optimizer/extensions/front/no_op_eraser.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/__init__.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/add_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/elu_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/flatten_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/image_scaler_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/instance_normalization.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/instance_normalization_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/leaky_relu_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/lrn_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/matmul_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/mul_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/pad_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/slice_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/squeeze_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/transpose_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/unsqueeze_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/onnx/upsample_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/squared_difference.py
+/usr/share/openvino/model-optimizer/extensions/front/standalone_const_eraser.py
+/usr/share/openvino/model-optimizer/extensions/front/sub.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/ArgMaxReshape.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/ConvFlatten.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/FasterRCNNs.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/MaskRCNNs.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/ObjectDetectionAPI.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/Pack.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/Preprocessor.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/SSDToolboxDetectionOutput.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/SSDs.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/Unpack.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/YOLO.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/__init__.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/argmax_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/extract_image_patches.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/faster_rcnn_support.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/faster_rcnn_support_api_v1.7.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/fifo_queue_v2_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/fifo_replacer.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/legacy_faster_rcnn_support.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/legacy_mask_rcnn_support.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/legacy_ssd_support.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/legacy_ssd_v2_support.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/mask_rcnn_support.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/mask_rcnn_support_api_v1.7.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/mvn.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/nearest_neighbor_upsampling.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/pad_ext.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/prelu.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/resize_bilinear.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/resize_nearest_neighbor.py
+/usr/share/openvino/model-optimizer/extensions/front/tf/ssd_support.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/ssd_toolbox_detection_output.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/ssd_toolbox_multihead_detection_output.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/ssd_v2_support.json
+/usr/share/openvino/model-optimizer/extensions/front/tf/yolo_v1_v2.json
+/usr/share/openvino/model-optimizer/extensions/middle/ConstSwitchResolver.py
+/usr/share/openvino/model-optimizer/extensions/middle/ConvertGroupedStridedSlice.py
+/usr/share/openvino/model-optimizer/extensions/middle/FusedBatchNormNonConstant.py
+/usr/share/openvino/model-optimizer/extensions/middle/FusedBatchNormTrainingCatch.py
+/usr/share/openvino/model-optimizer/extensions/middle/ShufflenetReshape.py
+/usr/share/openvino/model-optimizer/extensions/middle/UselessMerge.py
+/usr/share/openvino/model-optimizer/extensions/middle/__init__.py
+/usr/share/openvino/model-optimizer/extensions/ops/DetectionOutput.py
+/usr/share/openvino/model-optimizer/extensions/ops/SquaredDifference.py
+/usr/share/openvino/model-optimizer/extensions/ops/__init__.py
+/usr/share/openvino/model-optimizer/extensions/ops/accum.py
+/usr/share/openvino/model-optimizer/extensions/ops/argmax.py
+/usr/share/openvino/model-optimizer/extensions/ops/assert_op.py
+/usr/share/openvino/model-optimizer/extensions/ops/correlation.py
+/usr/share/openvino/model-optimizer/extensions/ops/ctc_greedy_decoder.py
+/usr/share/openvino/model-optimizer/extensions/ops/data_augmentation.py
+/usr/share/openvino/model-optimizer/extensions/ops/grn.py
+/usr/share/openvino/model-optimizer/extensions/ops/instance_normalization.py
+/usr/share/openvino/model-optimizer/extensions/ops/interp.py
+/usr/share/openvino/model-optimizer/extensions/ops/merge.py
+/usr/share/openvino/model-optimizer/extensions/ops/mvn.py
+/usr/share/openvino/model-optimizer/extensions/ops/normalize.py
+/usr/share/openvino/model-optimizer/extensions/ops/power_file.py
+/usr/share/openvino/model-optimizer/extensions/ops/prediction_heatmap.py
+/usr/share/openvino/model-optimizer/extensions/ops/prelu.py
+/usr/share/openvino/model-optimizer/extensions/ops/priorbox.py
+/usr/share/openvino/model-optimizer/extensions/ops/priorbox_clustered.py
+/usr/share/openvino/model-optimizer/extensions/ops/proposal.py
+/usr/share/openvino/model-optimizer/extensions/ops/proposal_python_example.py
+/usr/share/openvino/model-optimizer/extensions/ops/psroipooling.py
+/usr/share/openvino/model-optimizer/extensions/ops/regionyolo.py
+/usr/share/openvino/model-optimizer/extensions/ops/reorgyolo.py
+/usr/share/openvino/model-optimizer/extensions/ops/resample.py
+/usr/share/openvino/model-optimizer/extensions/ops/resize_factor_utils.py
+/usr/share/openvino/model-optimizer/extensions/ops/simplernms.py
+/usr/share/openvino/model-optimizer/extensions/ops/spatial_transformer.py
+/usr/share/openvino/model-optimizer/extensions/ops/switch.py
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites.bat
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites.sh
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_caffe.bat
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_caffe.sh
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_kaldi.bat
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_kaldi.sh
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_mxnet.bat
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_mxnet.sh
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_onnx.bat
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_onnx.sh
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_tf.bat
+/usr/share/openvino/model-optimizer/install_prerequisites/install_prerequisites_tf.sh
+/usr/share/openvino/model-optimizer/mo.py
+/usr/share/openvino/model-optimizer/mo/__init__.py
+/usr/share/openvino/model-optimizer/mo/back/ie_ir_ver_2/emitter.py
+/usr/share/openvino/model-optimizer/mo/back/replacement.py
+/usr/share/openvino/model-optimizer/mo/front/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/collect_attributes.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/custom_layers_mapping.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractor.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/batchnorm.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/concat.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/convolution.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/crop.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/deconvolution.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/eltwise.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/elu.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/flatten.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/inner_product.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/input.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/lrn.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/native_caffe.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/permute.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/pooling.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/power.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/relu.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/relu6.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/reshape.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/roipooling.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/scale.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/sigmoid.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/slice.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/softmax.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/tanh.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/tile.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/extractors/utils.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/loader.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/proto/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/proto/caffe_pb2.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/proto/generate_caffe_pb2.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/proto/mo_caffe.proto
+/usr/share/openvino/model-optimizer/mo/front/caffe/python_layer_extractor.py
+/usr/share/openvino/model-optimizer/mo/front/caffe/register_custom_ops.py
+/usr/share/openvino/model-optimizer/mo/front/common/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/common/custom_replacement_registry.py
+/usr/share/openvino/model-optimizer/mo/front/common/extractors/utils.py
+/usr/share/openvino/model-optimizer/mo/front/common/find_unsupported_ops.py
+/usr/share/openvino/model-optimizer/mo/front/common/layout.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/batch_norm.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/caffe_fallback.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/concat.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/const.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/convolution.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/crop.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/deconvolution.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/elemental.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/eltwise.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/expand_dims.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/flatten.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/inner_product.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/matmul.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/multi_box_detection.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/multi_box_prior.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/pooling.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/random_uniform.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/range.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/reduce.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/reshape.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/roipooling.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/slice.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/space_to_batch.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/split.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/squeeze.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/tile.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/transpose.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/up_sampling.py
+/usr/share/openvino/model-optimizer/mo/front/common/partial_infer/utils.py
+/usr/share/openvino/model-optimizer/mo/front/common/register_custom_ops.py
+/usr/share/openvino/model-optimizer/mo/front/common/replacement.py
+/usr/share/openvino/model-optimizer/mo/front/common/weights.py
+/usr/share/openvino/model-optimizer/mo/front/extractor.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractor.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/activation_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/affine_transform_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/clamp_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/concat_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/convolution_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/eltwise_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/inner_product_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/memory_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/pooling_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/reshape.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/scale_shift.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/sigmoid_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/slice_ext.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/extractors/split.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/loader.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/register_custom_ops.py
+/usr/share/openvino/model-optimizer/mo/front/kaldi/utils.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractor.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/activation.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/add_n.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/batchnorm.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/broadcast_mul.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/concat.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/convolution.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/crop.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/deconvolution.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/eltwise.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/flatten.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/fully_connected.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/l2_normalization.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/leaky_relu.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/lrn.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/mul_scalar.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/multibox_detection.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/multibox_prior.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/null.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/pooling.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/relu.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/reshape.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/scaleshift.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/sigmoid.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/slice_axis.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/softmax.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/transpose.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/up_sampling.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/extractors/utils.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/loader.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/nd_to_params.py
+/usr/share/openvino/model-optimizer/mo/front/mxnet/register_custom_ops.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractor.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/concat.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/const.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/constant.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/convolution.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/dropout.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/eltwise.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/fused_bn.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/global_average_pool.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/matmul.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/placeholder.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/pooling.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/reshape.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/extractors/utils.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/loader.py
+/usr/share/openvino/model-optimizer/mo/front/onnx/register_custom_ops.py
+/usr/share/openvino/model-optimizer/mo/front/subgraph_matcher.py
+/usr/share/openvino/model-optimizer/mo/front/tf/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/tf/change_placeholder_type.py
+/usr/share/openvino/model-optimizer/mo/front/tf/common.py
+/usr/share/openvino/model-optimizer/mo/front/tf/custom_subgraph_call.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractor.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/bias_add.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/concat.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/const.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/convolution.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/deconvolution.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/eltwise.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/elu.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/expand_dims.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/fused_bn.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/identity.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/lrn.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/matmul.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/mean.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/native_tf.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/pack.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/placeholder.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/pooling.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/prod.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/random_uniform.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/range.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/reshape.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/shape.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/sigmoid.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/slice.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/softmax.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/space_to_batch.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/split.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/squeeze.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/strided_slice.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/sum.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/tanh.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/tile.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/transpose.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/unpack.py
+/usr/share/openvino/model-optimizer/mo/front/tf/extractors/utils.py
+/usr/share/openvino/model-optimizer/mo/front/tf/loader.py
+/usr/share/openvino/model-optimizer/mo/front/tf/partial_infer/__init__.py
+/usr/share/openvino/model-optimizer/mo/front/tf/partial_infer/tf.py
+/usr/share/openvino/model-optimizer/mo/front/tf/register_custom_ops.py
+/usr/share/openvino/model-optimizer/mo/front/tf/replacement.py
+/usr/share/openvino/model-optimizer/mo/graph/__init__.py
+/usr/share/openvino/model-optimizer/mo/graph/graph.py
+/usr/share/openvino/model-optimizer/mo/main.py
+/usr/share/openvino/model-optimizer/mo/middle/__init__.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/__init__.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/conv.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/convert_data_type.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/debug.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/eliminate.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/fusing/__init__.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/fusing/decomposition.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/fusing/fuse_grouped_conv.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/fusing/fuse_linear_ops.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/fusing/fuse_linear_seq.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/fusing/helpers.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/fusing/mark_unfused_nodes.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/fusing/resnet_optimization.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/infer.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/l2normalization.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/leaky_relu.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/mean_scale_values.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/pool.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/shape.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/shared_weights_duplication.py
+/usr/share/openvino/model-optimizer/mo/middle/passes/tensor_names.py
+/usr/share/openvino/model-optimizer/mo/middle/pattern_match.py
+/usr/share/openvino/model-optimizer/mo/middle/replacement.py
+/usr/share/openvino/model-optimizer/mo/ops/__init__.py
+/usr/share/openvino/model-optimizer/mo/ops/activation.py
+/usr/share/openvino/model-optimizer/mo/ops/clamp.py
+/usr/share/openvino/model-optimizer/mo/ops/concat.py
+/usr/share/openvino/model-optimizer/mo/ops/const.py
+/usr/share/openvino/model-optimizer/mo/ops/convolution.py
+/usr/share/openvino/model-optimizer/mo/ops/crop.py
+/usr/share/openvino/model-optimizer/mo/ops/div.py
+/usr/share/openvino/model-optimizer/mo/ops/eltwise.py
+/usr/share/openvino/model-optimizer/mo/ops/expand_dims.py
+/usr/share/openvino/model-optimizer/mo/ops/flatten_onnx.py
+/usr/share/openvino/model-optimizer/mo/ops/inner_product.py
+/usr/share/openvino/model-optimizer/mo/ops/input.py
+/usr/share/openvino/model-optimizer/mo/ops/lin_op.py
+/usr/share/openvino/model-optimizer/mo/ops/lrn.py
+/usr/share/openvino/model-optimizer/mo/ops/memory.py
+/usr/share/openvino/model-optimizer/mo/ops/op.py
+/usr/share/openvino/model-optimizer/mo/ops/output.py
+/usr/share/openvino/model-optimizer/mo/ops/pad.py
+/usr/share/openvino/model-optimizer/mo/ops/permute.py
+/usr/share/openvino/model-optimizer/mo/ops/pooling.py
+/usr/share/openvino/model-optimizer/mo/ops/power.py
+/usr/share/openvino/model-optimizer/mo/ops/relu.py
+/usr/share/openvino/model-optimizer/mo/ops/reshape.py
+/usr/share/openvino/model-optimizer/mo/ops/roipooling.py
+/usr/share/openvino/model-optimizer/mo/ops/scale_shift.py
+/usr/share/openvino/model-optimizer/mo/ops/shape.py
+/usr/share/openvino/model-optimizer/mo/ops/slice.py
+/usr/share/openvino/model-optimizer/mo/ops/softmax.py
+/usr/share/openvino/model-optimizer/mo/ops/split.py
+/usr/share/openvino/model-optimizer/mo/ops/squeeze.py
+/usr/share/openvino/model-optimizer/mo/ops/tile.py
+/usr/share/openvino/model-optimizer/mo/ops/unsqueeze.py
+/usr/share/openvino/model-optimizer/mo/pipeline/__init__.py
+/usr/share/openvino/model-optimizer/mo/pipeline/caffe.py
+/usr/share/openvino/model-optimizer/mo/pipeline/common.py
+/usr/share/openvino/model-optimizer/mo/pipeline/kaldi.py
+/usr/share/openvino/model-optimizer/mo/pipeline/mx.py
+/usr/share/openvino/model-optimizer/mo/pipeline/onnx.py
+/usr/share/openvino/model-optimizer/mo/pipeline/tf.py
+/usr/share/openvino/model-optimizer/mo/utils/__init__.py
+/usr/share/openvino/model-optimizer/mo/utils/class_registration.py
+/usr/share/openvino/model-optimizer/mo/utils/cli_parser.py
+/usr/share/openvino/model-optimizer/mo/utils/custom_replacement_config.py
+/usr/share/openvino/model-optimizer/mo/utils/dsu.py
+/usr/share/openvino/model-optimizer/mo/utils/error.py
+/usr/share/openvino/model-optimizer/mo/utils/find_inputs.py
+/usr/share/openvino/model-optimizer/mo/utils/graph.py
+/usr/share/openvino/model-optimizer/mo/utils/guess_framework.py
+/usr/share/openvino/model-optimizer/mo/utils/import_extensions.py
+/usr/share/openvino/model-optimizer/mo/utils/logger.py
+/usr/share/openvino/model-optimizer/mo/utils/pipeline_config.py
+/usr/share/openvino/model-optimizer/mo/utils/replacement_pattern.py
+/usr/share/openvino/model-optimizer/mo/utils/simple_proto_parser.py
+/usr/share/openvino/model-optimizer/mo/utils/str_to.py
+/usr/share/openvino/model-optimizer/mo/utils/summarize_graph.py
+/usr/share/openvino/model-optimizer/mo/utils/tensorboard.py
+/usr/share/openvino/model-optimizer/mo/utils/unsupported_ops.py
+/usr/share/openvino/model-optimizer/mo/utils/utils.py
+/usr/share/openvino/model-optimizer/mo/utils/version.py
+/usr/share/openvino/model-optimizer/mo/utils/versions_checker.py
+/usr/share/openvino/model-optimizer/mo_caffe.py
+/usr/share/openvino/model-optimizer/mo_kaldi.py
+/usr/share/openvino/model-optimizer/mo_mxnet.py
+/usr/share/openvino/model-optimizer/mo_onnx.py
+/usr/share/openvino/model-optimizer/mo_tf.py
+/usr/share/openvino/model-optimizer/requirements.txt
+/usr/share/openvino/model-optimizer/requirements_caffe.txt
+/usr/share/openvino/model-optimizer/requirements_kaldi.txt
+/usr/share/openvino/model-optimizer/requirements_mxnet.txt
+/usr/share/openvino/model-optimizer/requirements_onnx.txt
+/usr/share/openvino/model-optimizer/requirements_tf.txt
+/usr/share/openvino/model-optimizer/tf_call_ie_layer/build.sh
+/usr/share/openvino/model-optimizer/tf_call_ie_layer/inference_engine_BUILD
+/usr/share/openvino/model-optimizer/tf_call_ie_layer/layer_sources/BUILD_1_2_to_1_3
+/usr/share/openvino/model-optimizer/tf_call_ie_layer/layer_sources/BUILD_1_4_higher
+/usr/share/openvino/model-optimizer/tf_call_ie_layer/layer_sources/sample_extension.cpp
+/usr/share/openvino/model-optimizer/tf_call_ie_layer/layer_sources/sample_extension.h
+/usr/share/openvino/model-optimizer/tf_call_ie_layer/layer_sources/tensorflow_layer.cpp
+/usr/share/openvino/model-optimizer/tf_call_ie_layer/layer_sources/tensorflow_layer.h
+/usr/share/openvino/model-optimizer/version.txt
 
 %files license
 %defattr(0644,root,root,0755)
@@ -118,10 +554,3 @@ echo ----[ mark ]----
 /usr/share/package-licenses/dldt-model-optimizer/inference-engine_thirdparty_mkl-dnn_LICENSE
 /usr/share/package-licenses/dldt-model-optimizer/inference-engine_thirdparty_mkl-dnn_src_cpu_xbyak_COPYRIGHT
 /usr/share/package-licenses/dldt-model-optimizer/inference-engine_thirdparty_mkl-dnn_tests_gtests_gtest_LICENSE
-
-%files python
-%defattr(-,root,root,-)
-
-%files python3
-%defattr(-,root,root,-)
-/usr/lib/python3*/*

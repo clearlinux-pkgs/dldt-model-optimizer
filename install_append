@@ -1,0 +1,2 @@
+mkdir -p %{buildroot}/usr/share/openvino
+cp -ar model-optimizer %{buildroot}/usr/share/openvino/
