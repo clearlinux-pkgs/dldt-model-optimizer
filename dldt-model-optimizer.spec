@@ -4,7 +4,7 @@
 #
 Name     : dldt-model-optimizer
 Version  : 2018.r3
-Release  : 2
+Release  : 3
 URL      : https://github.com/opencv/dldt/archive/2018_R3.tar.gz
 Source0  : https://github.com/opencv/dldt/archive/2018_R3.tar.gz
 Summary  : GoogleTest (with main() function)
@@ -15,6 +15,7 @@ Requires: dldt-model-optimizer-license = %{version}-%{release}
 Requires: networkx
 Requires: numpy
 Requires: onnx
+Requires: onnx-python3
 Requires: protobuf
 Requires: tensorflow
 BuildRequires : buildreq-cmake
@@ -48,11 +49,11 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1541013038
+export SOURCE_DATE_EPOCH=1541609365
 make  %{?_smp_mflags} || :
 
 %install
-export SOURCE_DATE_EPOCH=1541013038
+export SOURCE_DATE_EPOCH=1541609365
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/dldt-model-optimizer
 cp LICENSE %{buildroot}/usr/share/package-licenses/dldt-model-optimizer/LICENSE
