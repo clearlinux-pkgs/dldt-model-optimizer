@@ -1,0 +1,90 @@
+From 6619ee2692a96ec38eb5fb04ba158d88a4e0b495 Mon Sep 17 00:00:00 2001
+From: "Brett T. Warden" <brett.t.warden@intel.com>
+Date: Mon, 6 May 2019 11:22:19 -0700
+Subject: [PATCH] Allow newer test-generator
+
+---
+ model-optimizer/requirements.txt       | 2 +-
+ model-optimizer/requirements_caffe.txt | 4 ++--
+ model-optimizer/requirements_kaldi.txt | 2 +-
+ model-optimizer/requirements_mxnet.txt | 4 ++--
+ model-optimizer/requirements_onnx.txt  | 4 ++--
+ model-optimizer/requirements_tf.txt    | 4 ++--
+ 6 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/model-optimizer/requirements.txt b/model-optimizer/requirements.txt
+index 8ee99c8..e3aa785 100644
+--- a/model-optimizer/requirements.txt
++++ b/model-optimizer/requirements.txt
+@@ -4,5 +4,5 @@ networkx>=1.11
+ numpy>=1.12.0
+ protobuf==3.6.1
+ onnx>=1.1.2
+-test-generator==0.1.1
++test-generator>=0.1.1
+ defusedxml>=0.5.0
+diff --git a/model-optimizer/requirements_caffe.txt b/model-optimizer/requirements_caffe.txt
+index eb74892..b26ff50 100644
+--- a/model-optimizer/requirements_caffe.txt
++++ b/model-optimizer/requirements_caffe.txt
+@@ -1,5 +1,5 @@
+ networkx>=1.11
+ numpy>=1.12.0
+ protobuf==3.6.1
+-test-generator==0.1.1
+-defusedxml>=0.5.0
+\ No newline at end of file
++test-generator>=0.1.1
++defusedxml>=0.5.0
+diff --git a/model-optimizer/requirements_kaldi.txt b/model-optimizer/requirements_kaldi.txt
+index 24caaf4..4d7084a 100644
+--- a/model-optimizer/requirements_kaldi.txt
++++ b/model-optimizer/requirements_kaldi.txt
+@@ -1,4 +1,4 @@
+ networkx>=1.11
+ numpy==1.13.0
+-test-generator==0.1.1
++test-generator>=0.1.1
+ defusedxml>=0.5.0
+diff --git a/model-optimizer/requirements_mxnet.txt b/model-optimizer/requirements_mxnet.txt
+index 1e2f557..f5aa289 100644
+--- a/model-optimizer/requirements_mxnet.txt
++++ b/model-optimizer/requirements_mxnet.txt
+@@ -1,5 +1,5 @@
+ mxnet>=1.0.0,<=1.3.1
+ networkx>=1.11
+ numpy>=1.12.0
+-test-generator==0.1.1
+-defusedxml>=0.5.0
+\ No newline at end of file
++test-generator>=0.1.1
++defusedxml>=0.5.0
+diff --git a/model-optimizer/requirements_onnx.txt b/model-optimizer/requirements_onnx.txt
+index e196da4..d878dab 100644
+--- a/model-optimizer/requirements_onnx.txt
++++ b/model-optimizer/requirements_onnx.txt
+@@ -1,5 +1,5 @@
+ onnx>=1.1.2
+ networkx>=1.11
+ numpy>=1.12.0
+-test-generator==0.1.1
+-defusedxml>=0.5.0
+\ No newline at end of file
++test-generator>=0.1.1
++defusedxml>=0.5.0
+diff --git a/model-optimizer/requirements_tf.txt b/model-optimizer/requirements_tf.txt
+index 3864030..61c50da 100644
+--- a/model-optimizer/requirements_tf.txt
++++ b/model-optimizer/requirements_tf.txt
+@@ -1,5 +1,5 @@
+ tensorflow>=1.2.0
+ networkx>=1.11
+ numpy>=1.12.0
+-test-generator==0.1.1
+-defusedxml>=0.5.0
+\ No newline at end of file
++test-generator>=0.1.1
++defusedxml>=0.5.0
+-- 
+2.21.0
+

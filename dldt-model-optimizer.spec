@@ -4,7 +4,7 @@
 #
 Name     : dldt-model-optimizer
 Version  : 2019.r1.0.1
-Release  : 7
+Release  : 8
 URL      : https://github.com/opencv/dldt/archive/2019_R1.0.1/dldt-2019.R1.0.1.tar.gz
 Source0  : https://github.com/opencv/dldt/archive/2019_R1.0.1/dldt-2019.R1.0.1.tar.gz
 Summary  : @PACKAGE_DESCRIPTION@
@@ -24,10 +24,12 @@ Requires: protobuf
 Requires: scikit-learn
 Requires: scipy
 Requires: tensorflow
+Requires: test-generator
 Requires: tqdm
 Requires: xmltodict
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
+Patch1: 0001-Allow-newer-test-generator.patch
 
 %description
 # [OpenVINOâ¢ Toolkit](https://01.org/openvinotoolkit) - Deep Learning Deployment Toolkit repository
@@ -52,19 +54,20 @@ license components for the dldt-model-optimizer package.
 
 %prep
 %setup -q -n dldt-2019_R1.0.1
+%patch1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1556820809
+export SOURCE_DATE_EPOCH=1557167373
 export LDFLAGS="${LDFLAGS} -fno-lto"
 make  %{?_smp_mflags} || :
 
 
 %install
-export SOURCE_DATE_EPOCH=1556820809
+export SOURCE_DATE_EPOCH=1557167373
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/dldt-model-optimizer
 cp LICENSE %{buildroot}/usr/share/package-licenses/dldt-model-optimizer/LICENSE
