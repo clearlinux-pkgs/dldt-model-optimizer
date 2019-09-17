@@ -1,5 +1,5 @@
 PKG_NAME := dldt-model-optimizer
-URL = https://github.com/opencv/dldt/archive/2019_R1.1/dldt-2019.R1.1.tar.gz
+URL = https://github.com/opencv/dldt/archive/2019_R2/dldt-2019.R2.tar.gz
 ARCHIVES = 
 
 include ../common/Makefile.common
