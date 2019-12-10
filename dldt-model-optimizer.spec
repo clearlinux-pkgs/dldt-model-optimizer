@@ -4,7 +4,7 @@
 #
 Name     : dldt-model-optimizer
 Version  : 2019.r3.1
-Release  : 11
+Release  : 12
 URL      : https://github.com/opencv/dldt/archive/2019_R3.1/dldt-2019.R3.1.tar.gz
 Source0  : https://github.com/opencv/dldt/archive/2019_R3.1/dldt-2019.R3.1.tar.gz
 Summary  : @PACKAGE_DESCRIPTION@
@@ -77,7 +77,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1572372704
+export SOURCE_DATE_EPOCH=1575937108
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$CFLAGS -fno-lto "
@@ -87,7 +87,7 @@ make  %{?_smp_mflags}  || :
 
 
 %install
-export SOURCE_DATE_EPOCH=1572372704
+export SOURCE_DATE_EPOCH=1575937108
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/dldt-model-optimizer
 cp %{_builddir}/dldt-2019_R3.1/LICENSE %{buildroot}/usr/share/package-licenses/dldt-model-optimizer/7df059597099bb7dcf25d2a9aedfaf4465f72d8d
